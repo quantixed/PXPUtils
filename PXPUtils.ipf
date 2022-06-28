@@ -58,6 +58,10 @@ STATIC Function KillTheseWaves(wList)
 		KillWaves/Z $wName
 	endfor
 End
+
+////////////////////////////////////////////////////////////////////////
+// Colour functions
+////////////////////////////////////////////////////////////////////////
 // Colours are taken from Paul Tol SRON stylesheet
 // Colours updated. Brighter palette for up to 6 colours, then palette of 12 for > 6
 // Define colours
@@ -157,6 +161,26 @@ Function MakeColorWave(nRow, wName, [alpha])
 		w[i][2] = hexcolor_blue(color)
 	endfor
 End
+
+STATIC Function DecideOpacity(nTrace)
+	Variable nTrace
+	Variable alpha
+	if(nTrace < 10)
+		alpha = 1
+	elseif(nTrace < 50)
+		alpha = 0.5
+	elseif(nTrace < 100)
+		alpha = 0.3
+	else
+		alpha = 0.2
+	endif
+	alpha = round(65535 * alpha)
+	return alpha
+End
+
+////////////////////////////////////////////////////////////////////////
+// Layout functions
+////////////////////////////////////////////////////////////////////////
 
 STATIC Function MakeTheLayouts(prefix,nRow,nCol,[iter, filtVar, rev, alphaSort, saveIt, orient])
 	String prefix
@@ -281,21 +305,44 @@ STATIC Function TidyAndSave(prefix)
 	SavePICT/O/WIN=$layoutName/PGR=(1,-1)/E=-2/W=(0,0,0,0) as fileName
 End
 
-STATIC Function DecideOpacity(nTrace)
-	Variable nTrace
-	Variable alpha
-	if(nTrace < 10)
-		alpha = 1
-	elseif(nTrace < 50)
-		alpha = 0.5
-	elseif(nTrace < 100)
-		alpha = 0.3
-	else
-		alpha = 0.2
-	endif
-	alpha = round(65535 * alpha)
-	return alpha
+////////////////////////////////////////////////////////////////////////
+// Working with Wave Labels
+////////////////////////////////////////////////////////////////////////
+
+STATIC Function LabelWaveDimensions(m0,dimVar,labelStr)
+	Wave m0
+	Variable dimVar
+	String labelStr
+	Variable nLabel = ItemsInList(labelStr)
+	String str
+	
+	Variable i
+	
+	for(i = 0; i < nLabel; i += 1)
+		str = StringFromList(i,labelStr)
+		SetDimLabel dimVar,i,$str,m0
+	endfor
 End
+
+STATIC Function/S GetDimLabelsFromWave(m0,dimVar)
+	Wave m0
+	Variable dimVar
+	String labelStr = ""
+	Variable nLabel = DimSize(m0,dimVar)
+	
+	Variable i
+	
+	for(i = 0; i < nLabel; i += 1)
+		labelStr += GetDimLabel(m0,dimVar,i) + ";"
+	endfor
+	
+	return labelStr
+End
+
+
+////////////////////////////////////////////////////////////////////////
+// Misc functions
+////////////////////////////////////////////////////////////////////////
 
 // for axis scaling
 ///	@param	value	this is the input value that requires rounding up
