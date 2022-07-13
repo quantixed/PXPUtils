@@ -8,7 +8,7 @@
 // Utility functions
 ////////////////////////////////////////////////////////////////////////
 Function CleanSlate()
-	String fullList = WinList("*", ";","WIN:71")
+	String fullList = WinList("*", ";","WIN:65543")
 	Variable allItems = ItemsInList(fullList)
 	String name
 	Variable i
@@ -322,6 +322,8 @@ STATIC Function LabelWaveDimensions(m0,dimVar,labelStr)
 		str = StringFromList(i,labelStr)
 		SetDimLabel dimVar,i,$str,m0
 	endfor
+	
+	return 1
 End
 
 STATIC Function/S GetDimLabelsFromWave(m0,dimVar)
